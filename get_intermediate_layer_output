@@ -1,0 +1,10 @@
+resnet = gluon.model_zoo.vision.resnet18_v2(pretrained=True, ctx=mx.cpu(), prefix='model_')
+inputs = mx.sym.var('data')
+out = resnet(inputs)
+internals = out.get_internals()
+print(internals.list_outputs())
+outputs = internals['model_dense0_fwd_output'],
+# Create SymbolBlock that shares parameters with alexnet
+feat_model = gluon.SymbolBlock(outputs, inputs, params=resnet.collect_params())
+# x = mx.nd.random.normal(shape=(16, 3, 224, 224))
+print(feat_model(image_t.expand_dims(axis=0).as_in_context(ctx)))
